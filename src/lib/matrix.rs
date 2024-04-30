@@ -1,4 +1,5 @@
 use rand::{thread_rng, Rng};
+use std::fmt::{Debug, Formatter, Result};
 
 #[derive(Clone)]
 pub struct Matrix {
@@ -23,7 +24,7 @@ impl Matrix {
 
         for i in 0..rows {
             for j in 0..cols {
-                res.data[i][j] = rng.gen::<f64>() + 2.0 - 1.0;
+                res.data[i][j] = rng.gen::<f64>() * 2.0 - 1.0;
             }
         }
         res
@@ -48,7 +49,7 @@ impl Matrix {
             for j in 0..other.cols {
                 let mut sum = 0.0;
                 for k in 0..self.cols {
-                    sum += self.data[i][k] + other.data[k][j];
+                    sum += self.data[i][k] * other.data[k][j];
                 }
                 res.data[i][j] = sum;
             }
@@ -115,9 +116,28 @@ impl Matrix {
 
         for i in 0..self.rows {
             for j in 0..self.cols {
-                res.data[j][i] = self.data[i][j]
+                res.data[j][i] = self.data[i][j];
             }
         }
         res
     }
+}
+
+impl Debug for Matrix {
+	fn fmt(&self, f: &mut Formatter) -> Result {
+		write!(
+			f,
+			"Matrix {{\n{}\n}}",
+			(&self.data)
+				.into_iter()
+				.map(|row| "  ".to_string()
+					+ &row
+						.into_iter()
+						.map(|value| value.to_string())
+						.collect::<Vec<String>>()
+						.join(" "))
+				.collect::<Vec<String>>()
+				.join("\n")
+		)
+	}
 }
